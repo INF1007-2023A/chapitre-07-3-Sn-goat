@@ -8,18 +8,37 @@ NOTES_PER_OCTAVE = 12
 
 
 def build_note_dictionaries(note_names, add_octave_no=True):
-	C0_MIDI_NO = 12 # Plus basse note sur les pianos est La 0, mais on va commencer à générer les noms sur Do 0
+	C0_MIDI_NO = 12 
+	def note(note_names, add_octave_no):
+		n = 0
+		i = 0
+		lenNote = len(note_names)
+		while True:
+			i+=1
+			if n == lenNote:
+				n = 0
+			if add_octave_no:
+				yield f'{note_names[n]}{(i -1)//12}'
+				n+=1
+	
+			else:
+				yield f'{note_names[n]}'
+				n+=1
+	def MIDI(midi):
+		i = midi
+		while True:
+			yield i
+			i+=1
+			if i == 95:
+				break
 
-	midi_to_name = {}
-	name_to_midi = {}
-	# Pour chaque octave de 0 à 8 (inclus). On va générer tout l'octave 8, même si la dernière note du piano est Do 8
-		# Pour chaque note de l'octave
-			# Calculer le numéro MIDI de la note et ajouter aux deux dictionnaires
-			# Ajouter le numéro de l'octave au nom de la note si add_octave_no est vrai
-			# Garder les numéros de notes dans name_to_midi entre 0 et 11 si add_octave_no est faux
+	name_to_midi = dict(zip(note(note_names, add_octave_no), MIDI(C0_MIDI_NO)))	
+	midi_to_name = dict(zip(MIDI(C0_MIDI_NO), note(note_names, add_octave_no)))
+	
 	return midi_to_name, name_to_midi
 
 def build_print_note_name_callback(midi_to_name):
+	build_note_dictionaries()
 	pass
 
 def build_print_chord_name_callback(chord_names_and_notes, name_to_midi):
